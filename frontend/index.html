@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body class="min-h-screen bg-[#13121f] font-mono">
+    <main>
+      <header
+        class="px-10 min-h-[50px] text-white flex items-center bg-[#655bdd]"
+      >
+        <h1 class="font-bold text-2xl">Logo</h1>
+      </header>
+      <section class="px-10 mt-5">
+        <div class="flex flex-row justify-between">
+          <div>
+            <h4 class="text-yellow-50 font-mono font-bold">Books</h4>
+          </div>
+
+          <div
+            class="search relative w-[25%] h-[30px] rounded-md overflow-hidden border-[1px] border-yellow-300 focus-within:border-yellow-300"
+          >
+            <input class="w-full h-full pl-3 search-input" type="text" />
+            <div
+              class="w-[30px] h-[30px] absolute right-0 top-0 z-10 cursor-pointer"
+            >
+              <i class="fa fa-search text-red-600" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <div class="books flex flex-wrap justify-center mt-5"></div>
+      </section>
+    </main>
+    <div>
+      <header
+        class="px-10 min-h-[50px] text-white flex items-center bg-[#655bdd]"
+      >
+        <h1 class="font-bold text-2xl">Logo</h1>
+      </header>
+      <section class="px-10 mt-5">
+        <div class="flex flex-row justify-between">
+          <div>
+            <h4 class="text-yellow-50 font-mono font-bold">Books</h4>
+          </div>
+
+          <div
+            class="search relative w-[25%] h-[30px] rounded-md overflow-hidden border-[1px] border-yellow-300 focus-within:border-yellow-300"
+          >
+            <input class="w-full h-full pl-3 search-input" type="text" />
+            <div
+              class="w-[30px] h-[30px] absolute right-0 top-0 z-10 cursor-pointer"
+            >
+              <i class="fa fa-search text-red-600" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <div class="books flex flex-wrap justify-center mt-5"></div>
+      </section>
+    </div>
+
+    <script defer src="./js/main.js"></script>
+    <script
+      src="https://kit.fontawesome.com/your_font_awesome_kit_code.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
