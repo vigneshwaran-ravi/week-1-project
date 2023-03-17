@@ -35,37 +35,79 @@ const bookTemplate = (book) => `
 </div>
 `;
 
-const booksElement = document.querySelector(".books");
-async function getBooks() {
-  try {
-    const data = await fetch("http://localhost:3000/get-all-books");
-    const jsonData = await data.json();
-    books = jsonData.data;
-    books.forEach(function (book) {
-      const bookItem = document.createElement("div");
-      bookItem.innerHTML = bookTemplate(book);
-      booksElement.appendChild(bookItem);
-    });
-  } catch (error) {}
-}
-
-const searchInput = document.querySelector(".search-input");
-
-searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase().trim();
-  const filteredItems = books.filter(function (item) {
-    return item.name.toLowerCase().includes(query);
-  });
-  console.log(filteredItems, "itemitem");
-  // Clear the current list of items
-  booksElement.innerHTML = "";
-  filteredItems.forEach(function (item) {
-    const itemElement = document.createElement("div");
-    itemElement.innerHTML = bookTemplate(item);
-    booksElement.appendChild(itemElement);
-  });
-});
-
 document.addEventListener("DOMContentLoaded", function () {
-  getBooks();
+  const search = new Searchable();
+  search.getAllSearchables();
 });
+class Searchable {
+  constructor() {
+    this.books = [];
+    this.gridStore;
+    this.index = 0;
+  }
+  getAllSearchables() {
+    const searchable = document.querySelectorAll(".searchable");
+    searchable.forEach((item, i) => {
+      this.paintOneSearchable(item, i);
+    });
+  }
+
+  paintOneSearchable(item, i) {
+    this.main = document.createElement("div");
+    this.input = document.createElement("input");
+    this.grid = document.createElement("div");
+    this.main.className = "border-b-2 border-white mb-5";
+    this.grid.className = "flex flex-wrap gap-5 flex justify-center";
+    this.input.type = "text";
+    this.input.placeholder = "Search...";
+    this.input.className =
+      "w-[50%] mx-auto mt-4 h-[100px] flex h-full pl-3 search-input";
+    this.main.appendChild(this.input);
+    this.getBooks(this.grid, this.main);
+    this.addSearch(this.grid, this.input);
+    item.appendChild(this.main);
+    this.index = i;
+    console.log("jdfdf");
+  }
+
+  async getBooks(grid, main) {
+    const errorElement = document.querySelector(".error");
+    const loading = document.querySelector(".loading");
+    errorElement.textContent = "";
+    loading.textContent = "Loading...";
+    try {
+      console.log("121212");
+      if (!this.books.length) {
+        const data = await fetch("http://localhost:3000/get-all-books");
+        const jsonData = await data.json();
+        this.books = jsonData.data;
+      }
+      this.books.forEach(function (book) {
+        const bookItem = document.createElement("div");
+        bookItem.innerHTML += bookTemplate(book);
+        grid.appendChild(bookItem);
+      });
+      console.log("index", this.index);
+      main.appendChild(grid);
+    } catch (error) {
+      errorElement.textContent = error?.message;
+    } finally {
+      loading.textContent = "";
+    }
+  }
+
+  addSearch(grid, input) {
+    input.addEventListener("input", () => {
+      const query = input.value.toLowerCase().trim();
+      const filteredItems = this.books.filter(function (item) {
+        return item.name.toLowerCase().includes(query);
+      });
+      grid.innerHTML = "";
+      filteredItems.forEach(function (item) {
+        const itemElement = document.createElement("div");
+        itemElement.innerHTML = bookTemplate(item);
+        grid.appendChild(itemElement);
+      });
+    });
+  }
+}

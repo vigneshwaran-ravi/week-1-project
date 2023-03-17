@@ -4,8 +4,6 @@ const { Book } = require("./models/books");
 const cors = require("cors");
 const app = express();
 
-const router = express.Router();
-
 const corsOptions = {
   origin: "*",
 };
