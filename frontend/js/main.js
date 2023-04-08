@@ -1,113 +1,142 @@
-let books = [];
-const bookTemplate = (book) => `
-<div name=${book?.name} class="item w-[300px] h-[300px] border-[1px] border-teal-300 rounded-md overflow-hidden p-2">
-  <div class="img-container h-[60%] rounded-md overflow-hidden">
-    <img
-      src=${book?.image}
-      alt="world"
-      class="w-full h-full "
-    />
-  </div>
-  <div class="text-white mt-2">
-    <div class="text-sm">
-      <span>Title :</span>
-        <span>${book?.name}</span>
-    </div>
-    <div class="text-sm">
-      <span>Language :</span>
-        <span>${book?.language}</span>
-    </div>
-    <div class="text-xs">
-      <span>Author :</span>
-        <span>${book?.author}</span>
-    </div>
-    <div class="justify-between mt-2">
-      <div class="text-xs">
-        <span>Price :</span>
-          <span>${book?.price}</span>
-      </div>
-      <div class="text-xs">
-        <span>Pages :</span>
-          <span>${book?.pages}</span>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
 document.addEventListener("DOMContentLoaded", function () {
-  const search = new Searchable();
-  search.getAllSearchables();
+  const game = new BuildTicTac(0, 0);
+
+  game.generateMatric();
+
+  const playAgain = document.querySelector(".play-again");
+  playAgain.addEventListener("click", () => {
+    game.reset();
+  });
 });
-class Searchable {
+
+class BuildTicTac {
   constructor() {
-    this.books = [];
-    this.gridStore;
-    this.index = 0;
+    this.GAME_MATRIX = [
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+    ];
+    this.container = document.querySelector(".container");
+    this.ticTac = document.createElement("div");
+    this.ticTac.className = "tic-tac";
+    this.ticTac.className = "flex flex-col";
+    this.user = true;
+    this.resultElement = document.querySelector(".result");
   }
-  getAllSearchables() {
-    const searchable = document.querySelectorAll(".searchable");
-    searchable.forEach((item, i) => {
-      this.paintOneSearchable(item, i);
+  generateMatric() {
+    for (let i = 0; i < this.GAME_MATRIX.length; i++) {
+      const row = document.createElement("div");
+      row.className = "row flex flex-row relative";
+      for (let j = 0; j < this.GAME_MATRIX.length; j++) {
+        const col = document.createElement("div");
+        col.className =
+          "col flex flex-row w-[100px] h-[100px] bg-red-300 border-[1px] border-[#ccc] flex justify-center items-center cursor-pointer active:border-[#000]";
+        col.dataset.row = i;
+        // col.textContent = `${i}-${j}`;
+        col.dataset.col = j;
+        row.appendChild(col);
+      }
+      this.ticTac.appendChild(row);
+    }
+    this.container.appendChild(this.ticTac);
+    this.addGameFunctionality();
+  }
+  addGameFunctionality() {
+    this.ticTac.addEventListener("click", (event) => {
+      if (event.target.matches(".col")) {
+        const row = event.target.dataset.row;
+        const col = event.target.dataset.col;
+        if (this.GAME_MATRIX[row][col]) return;
+        if (this.user) {
+          event.target.textContent = "X";
+          this.GAME_MATRIX[row][col] = "X";
+        } else {
+          event.target.textContent = "O";
+          this.GAME_MATRIX[row][col] = "O";
+        }
+      }
+
+      this.gameLogic(event);
     });
   }
-
-  paintOneSearchable(item, i) {
-    this.main = document.createElement("div");
-    this.input = document.createElement("input");
-    this.grid = document.createElement("div");
-    this.main.className = "border-b-2 border-white mb-5";
-    this.grid.className = "flex flex-wrap gap-5 flex justify-center";
-    this.input.type = "text";
-    this.input.placeholder = "Search...";
-    this.input.className =
-      "w-[50%] mx-auto mt-4 h-[100px] flex h-full pl-3 search-input";
-    this.main.appendChild(this.input);
-    this.getBooks(this.grid, this.main);
-    this.addSearch(this.grid, this.input);
-    item.appendChild(this.main);
-    this.index = i;
-    console.log("jdfdf");
-  }
-
-  async getBooks(grid, main) {
-    const errorElement = document.querySelector(".error");
-    const loading = document.querySelector(".loading");
-    errorElement.textContent = "";
-    loading.textContent = "Loading...";
-    try {
-      console.log("121212");
-      if (!this.books.length) {
-        const data = await fetch("http://localhost:3000/get-all-books");
-        const jsonData = await data.json();
-        this.books = jsonData.data;
+  gameLogic(event) {
+    this.user = !this.user;
+    console.log(this.GAME_MATRIX);
+    let rdx_sum = 0;
+    let ldx_sum = 0;
+    let rdo_sum = 0;
+    let ldo_sum = 0;
+    let isTie = 0;
+    for (let i = 0; i < this.GAME_MATRIX.length; i++) {
+      let rx_sum = 0;
+      let cx_sum = 0;
+      let ro_sum = 0;
+      let co_sum = 0;
+      for (let j = 0; j < this.GAME_MATRIX.length; j++) {
+        if (this.GAME_MATRIX[i][j]) {
+          isTie += 1;
+        }
+        if (this.GAME_MATRIX[i][j] === "X") {
+          rx_sum += 1;
+        } else if (this.GAME_MATRIX[i][j] === "O") {
+          ro_sum += 1;
+        }
+        if (this.GAME_MATRIX[j][i] === "X") {
+          cx_sum += 1;
+        } else if (this.GAME_MATRIX[j][i] === "O") {
+          co_sum += 1;
+        }
+        const lds = i + j;
+        if (i === j && this.GAME_MATRIX[i][j] === "X") {
+          rdx_sum += 1;
+        } else if (i === j && this.GAME_MATRIX[i][j] === "O") {
+          rdo_sum += 1;
+        }
+        if (lds === 2 && this.GAME_MATRIX[i][j] === "X") {
+          ldx_sum += 1;
+        } else if (lds === 2 && this.GAME_MATRIX[i][j] === "O") {
+          ldo_sum += 1;
+        }
       }
-      this.books.forEach(function (book) {
-        const bookItem = document.createElement("div");
-        bookItem.innerHTML += bookTemplate(book);
-        grid.appendChild(bookItem);
-      });
-      console.log("index", this.index);
-      main.appendChild(grid);
-    } catch (error) {
-      errorElement.textContent = error?.message;
-    } finally {
-      loading.textContent = "";
+      if (rx_sum === 3 || cx_sum === 3 || rdx_sum === 3 || ldx_sum === 3) {
+        this.result("X");
+      } else if (
+        ro_sum === 3 ||
+        co_sum === 3 ||
+        rdo_sum === 3 ||
+        ldo_sum === 3
+      ) {
+        this.result("O");
+      }
+    }
+    if (isTie === 9) {
+      this.result(null);
     }
   }
-
-  addSearch(grid, input) {
-    input.addEventListener("input", () => {
-      const query = input.value.toLowerCase().trim();
-      const filteredItems = this.books.filter(function (item) {
-        return item.name.toLowerCase().includes(query);
-      });
-      grid.innerHTML = "";
-      filteredItems.forEach(function (item) {
-        const itemElement = document.createElement("div");
-        itemElement.innerHTML = bookTemplate(item);
-        grid.appendChild(itemElement);
-      });
-    });
+  result(winner) {
+    this.ticTac.classList.add("pointer-events-none");
+    this.resultElement.classList.remove("hidden");
+    this.resultElement.classList.add("flex");
+    const text = document.querySelector(".text");
+    if (winner) {
+      text.textContent = `${winner} won the match`;
+    } else {
+      text.textContent = `Draw`;
+    }
+  }
+  reset() {
+    this.GAME_MATRIX = this.GAME_MATRIX?.map((item) =>
+      this.GAME_MATRIX?.map((item) => null)
+    );
+    this.ticTac.classList.remove("pointer-events-none");
+    this.resultElement = document.querySelector(".result");
+    this.resultElement.classList.remove("flex");
+    this.resultElement.classList.add("hidden");
+    console.log(this.GAME_MATRIX, "236789");
+    this.ticTac.remove();
+    this.generateMatric();
   }
 }
+
+// attribue color, weight, l, w, speed, position
+// properties (or) methods body, wheel, gear, seat, rear window, engine
